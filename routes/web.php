@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\KasirController;
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [KasirController::class, 'dashboard'])->name('dashboard');
+Route::get('/kasir', [KasirController::class, 'kasir'])->name('kasir');
+Route::resource('/produk', ProdukController::class);
+Route::get('/history', [KasirController::class, 'history'])->name('history');
+Route::post('/transaksi', [TransaksiController::class, 'simpanTransaksi'])->name('transaksi.simpan');

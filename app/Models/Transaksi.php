@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Transaksi extends Model
 {
     use HasFactory;
+    protected $table = 'transactions';
     protected $fillable = [
-        'total_harga', 
-        'jumlah_total', 
-        'tanggal_transaksi'
+        'total_price', 
+        'total_quantity', 
+        'transaction_date'
     ];
 
     // Relasi dengan transaksi items

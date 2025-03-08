@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('transaksi', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->decimal('total_harga', 10, 2);
-            $table->integer('jumlah_total')->default(0);
-            $table->date('tanggal_transaksi');
+            $table->decimal('total_price', 10, 2);
+            $table->integer('total_quantity')->default(0);
+            $table->date('transaction_date');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('transaksi');
+        Schema::dropIfExists('transactions');
     }
 };

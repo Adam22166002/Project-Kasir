@@ -32,11 +32,7 @@
                         <tr>
                             <td>{{ $product->id }}</td>
                             <td>
-                                @if($product->image_path)
-                                    <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="50">
-                                @else
-                                    <span class="text-muted">No image</span>
-                                @endif
+                                <img src="{{ asset('storage/' . ($product->image_path ?? 'img/no-image.jpg')) }}" width="50" height="50" class="img-thumbnail">
                             </td>
                             <td>{{ $product->name }}</td>
                             <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
@@ -70,46 +66,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Tambah Produk -->
-<div class="modal fade" id="tambahProdukModal" tabindex="-1" aria-labelledby="tambahProdukModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="{{ route('produk.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tambahProdukModalLabel">Tambah Produk Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nama Produk</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Harga</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp.</span>
-                            <input type="number" class="form-control" id="price" name="price" min="0" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="stock" class="form-label">Stok</label>
-                        <input type="number" class="form-control" id="stock" name="stock" min="0" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Gambar Produk</label>
-                        <input type="file" class="form-control" id="image" name="image">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

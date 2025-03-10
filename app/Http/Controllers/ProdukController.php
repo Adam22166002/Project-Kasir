@@ -25,28 +25,22 @@ class ProdukController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        // Handle image upload if exists
+        
+        $product = new Produk();
+        $product->name = $request->name;
+        $product->price = 0; 
+        $product->stock = 0; 
+        
         if ($request->hasFile('image_path')) {
-            $imagePath = $request->file('image_path')->store('public/images');
-            $imagePath = str_replace('public/', '', $imagePath); // Clean the path
-        } else {
-            $imagePath = null;
+            $image_path = $request->file('image_path')->store('products', 'public');
+            $product->image_path = $image_path;
         }
+        
+        $product->save();
 
-        // Create product
-        Produk::create([
-            'name' => $request->name,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'image_path' => $imagePath,
-        ]);
-
-        return redirect()->route('produk.index');
+        return redirect()->route('dashboard')->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // Display the specified product
@@ -77,11 +71,12 @@ class ProdukController extends Controller
 
         // Handle image upload if exists
         if ($request->hasFile('image_path')) {
-            $imagePath = $request->file('image_path')->store('public/images');
-            $imagePath = str_replace('public/', '', $imagePath);
+            $imagePath = $request->file('image_path')->store('products', 'public');
+            $produk->image_path = $imagePath;
         } else {
-            $imagePath = $produk->image_path; // keep the old image if not updated
+            $imagePath = $produk->image_path;
         }
+        
 
         $produk->update([
             'name' => $request->name,
@@ -100,5 +95,37 @@ class ProdukController extends Controller
         $produk->delete();
 
         return redirect()->route('produk.index');
+    }
+
+    public function updatePrice(Request $request, Produk $product)
+    {
+        $request->validate([
+            'price' => 'required|numeric|min:0',
+        ]);
+        
+        $product->price = $request->price;
+        $product->save();
+        
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        return redirect()->back()->with('success', 'Harga produk berhasil diperbarui!');
+    }
+    
+    public function updateStock(Request $request, Produk $product)
+    {
+        $request->validate([
+            'stock' => 'required|integer|min:0',
+        ]);
+        
+        $product->stock = $request->stock;
+        $product->save();
+        
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        return redirect()->back()->with('success', 'Stok produk berhasil diperbarui!');
     }
 }

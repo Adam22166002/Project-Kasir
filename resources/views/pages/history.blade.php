@@ -11,6 +11,10 @@
                 <input type="date" name="date" value="{{ request('date', date('Y-m-d')) }}" class="form-control me-2">
                 <button type="submit" class="btn btn-primary">Filter</button>
             </form>
+            <form action="{{ route('kasir.reset') }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin mereset kasir? Semua data transaksi hari ini akan dihapus.')">
+                                @csrf
+                                <button type="submit" id="btn-reset-kasir" class="btn btn-danger">Reset Kasir</button>
+                            </form>
         </div>
     </div>
 

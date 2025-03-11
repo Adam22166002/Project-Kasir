@@ -35,7 +35,7 @@ class HistoryController extends Controller
         // Hitung total produk terjual hari ini
         $totalProdukTerjual = $todaySales->sum('total_quantity');
         
-        return view('pages.history', compact(
+        return view('history.index', compact(
             'transactions',
             'products', 
             'setupComplete', 

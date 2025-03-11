@@ -15,14 +15,8 @@ class KasirController extends Controller
 {
     public function index()
     {
-        $products = Produk::all();
-        return view('pages.kasir', compact('products'));
-    }
-    
-    public function transaksi()
-    {
         $products = Produk::where('stock', '>', 0)->get();
-        return view('pages.kasir', compact('products'));
+        return view('kasir.index', compact('products'));
     }
     
     public function checkout(Request $request)
@@ -102,19 +96,16 @@ class KasirController extends Controller
     }
     public function resetKasir()
     {
-        // Hapus semua transaksi hari ini
-        $today = Carbon::today();
-        Transaksi::whereDate('transaction_date', $today)->delete();
-        
-        // Reset stok produk ke 0 (opsional, tergantung kebutuhan)
-        // Product::query()->update(['stock' => 0]);
-        
-        return redirect()->route('dashboard')->with('success', 'Kasir berhasil direset! Silahkan setup ulang.');
+        try {
+            // Hapus semua item transaksi terlebih dahulu
+            TransaksiItem::truncate();
+
+            // Hapus semua transaksi
+            Transaksi::truncate();
+
+            return redirect()->back()->with('success', 'Semua data transaksi kasir berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus data transaksi. Coba lagi nanti.');
+        }
     }
-    public function completeSetup()
-{
-    session(['setupComplete' => true]);
-    
-    return response()->json(['success' => true]);
-}
 }

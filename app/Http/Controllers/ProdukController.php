@@ -25,7 +25,7 @@ class ProdukController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_path' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
         $product = new Produk();
@@ -40,7 +40,7 @@ class ProdukController extends Controller
         
         $product->save();
 
-        return redirect()->route('dashboard')->with('success', 'Produk berhasil ditambahkan!');
+        return redirect()->route('step2')->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // Display the specified product
@@ -102,16 +102,17 @@ class ProdukController extends Controller
         $request->validate([
             'price' => 'required|numeric|min:0',
         ]);
-        
+
         $product->price = $request->price;
         $product->save();
-        
+
         if ($request->ajax()) {
             return response()->json(['success' => true]);
         }
-        
-        return redirect()->back()->with('success', 'Harga produk berhasil diperbarui!');
+
+        return redirect()->route('step3')->with('success', 'Harga produk berhasil diperbarui!');
     }
+
     
     public function updateStock(Request $request, Produk $product)
     {
@@ -126,6 +127,7 @@ class ProdukController extends Controller
             return response()->json(['success' => true]);
         }
         
-        return redirect()->back()->with('success', 'Stok produk berhasil diperbarui!');
+        return redirect()->route('step4')->with('success', 'Stok produk berhasil diperbarui!');
     }
+
 }

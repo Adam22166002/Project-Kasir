@@ -1,3 +1,6 @@
+@extends('layouts.main')
+
+@section('content')
 <!-- Step 1: Tombol Start -->
 <div class="setup-step text-white w-100" id="step-start" style="display: block;
             background: linear-gradient(rgba(255, 0, 0, 0.7), rgba(255, 0, 0, 0.7)), 
@@ -12,11 +15,12 @@
                         <div class="card-body py-5 d-flex flex-column align-items-center justify-content-center">
                             <h1 class="display-4 mb-4 text-white font-weight-bold">Aplikasi Kasir</h1>
                             <p class="lead">Selamat datang! Klik tombol di bawah untuk memulai pengaturan kasir.</p>
-                            <button id="btn-start" class="btn btn-light btn-lg mt-4 px-5 py-3" onclick="showStep('step-product')">
+                            <a href="{{ route('step2') }}" id="btn-start" class="btn btn-light btn-lg mt-4 px-5 py-3">
                                 <i class="fas fa-play me-2"></i> MULAI SETUP
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+@endsection

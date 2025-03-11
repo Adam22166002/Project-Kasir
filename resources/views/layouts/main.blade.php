@@ -11,7 +11,7 @@
     <meta name="author" content="" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Dashboard - App Kasir</title>
+    <title>App Kasir</title>
     <link
       href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css"
       rel="stylesheet"
@@ -42,16 +42,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-                window.showStep = function(stepId) {
-                    document.querySelectorAll('.setup-step').forEach(step => {
-                        step.style.display = 'none';
-                    });
-                    
-
-                    document.getElementById(stepId).style.display = 'block';
-
-                    window.scrollTo(0, 0);
-                };
                 window.completeSetupWithConfirmation = function() {
                     Swal.fire({
                         title: 'Selesai Setup?',
@@ -68,7 +58,7 @@
                         }
                     });
                 };
-
+                //finish setup
                 window.finishSetup = function() {
 
                     document.getElementById('kasir-setup').style.display = 'none';
@@ -108,7 +98,7 @@
                         });
                     });
                 };
-
+                //setup completed
                 window.showSetupWithConfirmation = function() {
                     Swal.fire({
                         title: 'Kembali ke Setup?',
@@ -121,39 +111,85 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            showSetup();
+                            window.location.href = "{{ route('step2') }}";
                         }
                     });
                 };
-
-                // Function to show setup again from dashboard
-                window.showSetup = function() {
-                    // Hide the dashboard
-                    document.getElementById('kasir-active').style.display = 'none';
-                    
-                    // Show the setup wizard and go to product step
-                    document.getElementById('kasir-setup').style.display = 'block';
-                    showStep('step-product');
-                };
-                
+              
                 // Function to confirm reset kasir
-                function confirmResetKasir() {
-                Swal.fire({
-                    title: 'Reset Aplikasi Kasir?',
-                    text: "PERHATIAN! Semua data produk dan transaksi akan dihapus. Tindakan ini tidak dapat dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Reset Semua Data!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('resetKasirForm').submit();
-                    }
+                window.confirmResetKasir = function() {
+                    Swal.fire({
+                        title: 'Reset Aplikasi Kasir?',
+                        text: "PERHATIAN! Semua data produk dan transaksi akan dihapus. Tindakan ini tidak dapat dibatalkan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Reset Semua Data!',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var form = document.getElementById('resetKasirForm');
+                            if (form) {
+                                form.submit();
+                            } else {
+                                console.error("Form reset tidak ditemukan!");
+                            }
+                        }
+                    });
+                };
+                // Mengisi form edit saat modal dibuka
+                document.querySelectorAll('.edit-product').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const name = this.dataset.name;
+                        const price = this.dataset.price;
+                        const stock = this.dataset.stock;
+                        const image = this.dataset.image_path;
+                        
+                        document.getElementById('edit_name').value = name;
+                        document.getElementById('edit_price').value = price;
+                        document.getElementById('edit_stock').value = stock;
+                        if (image) {
+                            document.getElementById('edit_image_preview').src = `/storage/${image}`;
+                        } else {
+                            document.getElementById('edit_image_preview').src = 'https://via.placeholder.com/150';
+                        }
+
+                        document.getElementById('editProdukForm').action = `/produk/${id}`;
+                    });
                 });
-            }
+                
+                // Konfirmasi hapus produk
+                // document.querySelectorAll('.delete-product').forEach(button => {
+                //     button.addEventListener('click', function() {
+                //         const id = this.dataset.id;
+                //         const name = this.dataset.name;
+                        
+                //         if (confirm(`Apakah Anda yakin ingin menghapus produk "${name}"?`)) {
+                //             // Buat form submit hapus
+                //             const form = document.createElement('form');
+                //             form.method = 'POST';
+                //             form.action = `/produk/${id}`;
+                            
+                //             const methodInput = document.createElement('input');
+                //             methodInput.type = 'hidden';
+                //             methodInput.name = '_method';
+                //             methodInput.value = 'DELETE';
+                            
+                //             const csrfInput = document.createElement('input');
+                //             csrfInput.type = 'hidden';
+                //             csrfInput.name = '_token';
+                //             csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+                            
+                //             form.appendChild(methodInput);
+                //             form.appendChild(csrfInput);
+                //             document.body.appendChild(form);
+                //             form.submit();
+                //         }
+                //     });
+                // });
 
             // Event listeners for deleting product in setup
             document.querySelectorAll('.delete-product').forEach(button => {

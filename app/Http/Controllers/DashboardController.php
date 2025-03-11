@@ -13,6 +13,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $transactions = Transaksi::with('transaksiItem.product')->get();
         $today = Carbon::today();
         
         // Ambil semua produk
@@ -40,7 +41,8 @@ class DashboardController extends Controller
             'setupComplete', 
             'todaySales', 
             'totalPenjualan', 
-            'totalProdukTerjual'
+            'totalProdukTerjual',
+            'transactions'
         ));
     }
     

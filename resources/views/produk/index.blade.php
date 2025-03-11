@@ -1,78 +1,101 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1>Manajemen Stok Produk</h1>
-        </div>
-        <div class="col-md-4 text-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahProdukModal">
-                Tambah Produk Baru
-            </button>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Gambar</th>
-                            <th>Nama Produk</th>
-                            <th>Harga</th>
-                            <th>Stok</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($products as $product)
-                        <tr>
-                            <td>{{ $product->id }}</td>
-                            <td>
-                                @if($product->image_path)
-                                    <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="50">
-                                @else
-                                    <span class="text-muted">No image</span>
-                                @endif
-                            </td>
-                            <td>{{ $product->name }}</td>
-                            <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
-                            <td>
-                                <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
-                                    {{ $product->stock }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-info edit-product" 
-                                        data-id="{{ $product->id }}"
-                                        data-name="{{ $product->name }}"
-                                        data-price="{{ $product->price }}"
-                                        data-stock="{{ $product->stock }}"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editProdukModal">
-                                    Edit
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4">
+                    <div class="page-header-content pt-4">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto mt-4">
+                                <h1 class="page-header-title">
+                                    <div class="page-header-icon">
+                                        <i data-feather="activity"></i>
+                                    </div>
+                                    Kelola Produk
+                                </h1>
+                                <div class="page-header-subtitle">
+                                    Monitor kelola produk toko Anda
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-auto mt-4">
+                                <div class="input-group input-group-joined border-0" style="width: 16.5rem">
+                                    <span class="input-group-text"><i class="text-primary" data-feather="arrow-left"></i></span>
+                                    <a href="{{ route('dashboard') }}" class="btn btn-light">Kembali ke Dashboard</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- tabel -->
+            <div class="container py-4 mt-n10">
+                <div class="card">
+                    <div class="card-header border-bottom bg-light d-flex justify-content-between align-items-center">
+                        <div class="h3 text-primary card-title">Tabel Produk</div>
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahProdukModal">
+                                <i class="fas fa-plus-circle me-2"></i> Tambah Produk Baru
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-product" 
-                                        data-id="{{ $product->id }}"
-                                        data-name="{{ $product->name }}">
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Tidak ada produk tersedia</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="datatablesSimple" class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Gambar</th>
+                                        <th>Nama Produk</th>
+                                        <th>Harga</th>
+                                        <th>Stok</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($products as $product)
+                                    <tr>
+                                        <td>{{ $product->id }}</td>
+                                        <td>
+                                            @if($product->image_path)
+                                                <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="60">
+                                            @else
+                                                <span class="text-muted">No image</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $product->name }}</td>
+                                        <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
+                                        <td>
+                                            <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
+                                                {{ $product->stock }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info edit-product" 
+                                                    data-id="{{ $product->id }}"
+                                                    data-name="{{ $product->name }}"
+                                                    data-price="{{ $product->price }}"
+                                                    data-stock="{{ $product->stock }}"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editProdukModal">
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-product" 
+                                                    data-id="{{ $product->id }}"
+                                                    data-name="{{ $product->name }}">
+                                                Hapus
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center">Tidak ada produk tersedia</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal Tambah Produk -->
 <div class="modal fade" id="tambahProdukModal" tabindex="-1" aria-labelledby="tambahProdukModalLabel" aria-hidden="true">

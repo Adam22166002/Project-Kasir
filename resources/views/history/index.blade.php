@@ -42,10 +42,10 @@
     <div class="card">
         <div class="h3 px-4 pt-3 text-primary card-title">History Transaksi</div>
             <div class="px-4 d-flex justify-content-between align-items-center">
-                <form action="{{ route('kasir.reset') }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin mereset kasir? Semua data transaksi hari ini akan dihapus.')">
-                    @csrf
-                    <button type="submit" id="btn-reset-kasir" class="btn btn-danger">Reset Kasir</button>
-                </form>
+            <form action="{{ route('kasir.reset') }}" method="POST" class="d-inline" id="reset-kasir-form">
+                @csrf
+                <button type="button" id="btn-reset-kasir" class="btn btn-danger">Reset Kasir</button>
+            </form>
                 <form action="{{ route('history') }}" method="GET" class="d-flex">
                     <input type="date" name="date" value="{{ request('date', date('Y-m-d')) }}" class="form-control me-2">
                     <button type="submit" class="btn btn-primary">Filter</button>
@@ -161,64 +161,28 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Format tanggal
-                            const date = new Date(data.transaction.created_at);
-                            const formattedDate = new Intl.DateTimeFormat('id-ID', { 
-                                dateStyle: 'full', 
-                                timeStyle: 'medium'
-                            }).format(date);
-                            
-                            // Render detail transaksi
-                            detailContent.innerHTML = `
-                                <div class="receipt-container p-3 border">
-                                    <div class="text-center mb-3">
-                                        <h4>Toko Anda</h4>
-                                        <p>Jl. Contoh No. 123</p>
-                                        <p>${formattedDate}</p>
-                                        <p>No. Transaksi: ${data.transaction.id}</p>
-                                    </div>
-                                    <hr>
-                                    
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Produk</th>
-                                                <th class="text-end">Harga</th>
-                                                <th class="text-center">Jumlah</th>
-                                                <th class="text-end">Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${data.items.map(item => `
-                                                <tr>
-                                                    <td>${item.product.name}</td>
-                                                    <td class="text-end">Rp. ${parseInt(item.price).toLocaleString()}</td>
-                                                    <td class="text-center">${item.quantity}</td>
-                                                    <td class="text-end">Rp. ${parseInt(item.subtotal).toLocaleString()}</td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th colspan="3" class="text-end">Total</th>
-                                                <th class="text-end">Rp. ${parseInt(data.transaction.total_price).toLocaleString()}</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    
-                                    <hr>
-                                    
-                                    <div class="text-center mt-3">
-                                        <p>Terima kasih telah berbelanja</p>
-                                    </div>
-                                </div>
-                            `;
+                            const transaction = data.transaction;
+                            const items = transaction.items;
+
+                            detailTransactionId.textContent = transaction.id;
+                            detailTransactionDate.textContent = transaction.created_at;
+                            detailTotalPrice.textContent = transaction.total_price;
+
+                            detailItems.innerHTML = '';
+                            items.forEach(item => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td class="px-6 py-4 whitespace-nowrap">${item.product.name}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">${item.price}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">${item.quantity}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">${item.subtotal}</td>
+                                `;
+                                detailItems.appendChild(row);
+                            });
+
+                            detailModal.classList.remove('hidden');
                         } else {
-                            detailContent.innerHTML = `
-                                <div class="alert alert-danger">
-                                    ${data.message || 'Terjadi kesalahan saat mengambil data transaksi'}
-                                </div>
-                            `;
+                            alert('Gagal memuat detail transaksi.');
                         }
                     })
                     .catch(error => {

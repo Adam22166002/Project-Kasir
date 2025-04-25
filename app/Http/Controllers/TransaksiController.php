@@ -15,13 +15,22 @@ class TransaksiController extends Controller
 {
     public function simpanTransaksi(Request $request)
     {
+        $request->validate([
+            'total' => 'required|numeric',
+            'items' => 'required|array',
+            'items.*.productId' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|numeric|min:1',
+            'items.*.subtotal' => 'required|numeric'
+        ]);
+
+        
         DB::beginTransaction();
         try {
             // Buat transaksi baru - using correct field name 'total_price' instead of 'total_harga'
             $transaksi = new Transaksi();
             $transaksi->total_price = $request->total; // Corrected field name
             $transaksi->total_quantity = array_sum(array_column($request->items, 'quantity'));
-            // Add any other required fields that might not have default values
+            $transaksi->transaction_date = now();
             $transaksi->save();
 
             // Simpan item transaksi dan update stok
@@ -48,4 +57,18 @@ class TransaksiController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+    public function detail($id)
+{
+    $transaksi = Transaksi::with('items.product')->find($id);
+
+    if (!$transaksi) {
+        return response()->json(['success' => false, 'message' => 'Transaksi tidak ditemukan']);
+    }
+
+    return response()->json([
+        'success' => true,
+        'transaction' => $transaksi->load('items.product')
+    ]);
+    
+}
 }

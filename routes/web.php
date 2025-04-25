@@ -19,28 +19,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Step 1:
-Route::get('/', [StepController::class, 'showStep1'])->name('step1');
+// // Step 1:
+// Route::get('/', [StepController::class, 'showStep1'])->name('step1');
 // Step 2:
-Route::get('/setup_produk', [StepController::class, 'showStep2'])->name('step2');
+// Route::get('/setup_produk', [StepController::class, 'showStep2'])->name('step2');
 
-// Step 3: 
-Route::get('/setup_harga', [StepController::class, 'showStep3'])->name('step3');
-Route::post('/produk/update-price/{id}', [ProdukController::class, 'updatePrice'])->name('produk.update.price');
-// Step 4:
-Route::get('/setup_stock', [StepController::class, 'showStep4'])->name('step4');
-Route::post('/produk/update-stock/{id}', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
+// // Step 3: 
+// Route::get('/setup_harga', [StepController::class, 'showStep3'])->name('step3');
+// Route::post('/produk/update-price/{id}', [ProdukController::class, 'updatePrice'])->name('produk.update.price');
+// // Step 4:
+// Route::get('/setup_stock', [StepController::class, 'showStep4'])->name('step4');
+// Route::post('/produk/update-stock/{id}', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
 
 //setup selesai
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/kasir', [KasirController::class, 'index'])->name('kasir');
 // Route::get('/kasir/transaksi', [KasirController::class, 'transaksi'])->name('kasir.transaksi'); 
 Route::post('/kasir/reset', [KasirController::class, 'resetKasir'])->name('kasir.reset');
+// Route::post('/kasir/reset', [KasirController::class, 'reset'])->name('kasir.reset');
 Route::post('/kasir/complete-setup', 'KasirController@completeSetup')->name('kasir.complete-setup');
 Route::resource('/produk', ProdukController::class);
-Route::post('/produk/{product}/update-price', [ProdukController::class, 'updatePrice'])->name('produk.update.price');
-Route::patch('/produk/{product}/update-stock', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
+// Route::post('/produk/{product}/update-price', [ProdukController::class, 'updatePrice'])->name('produk.update.price');
+// Route::patch('/produk/{product}/update-stock', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
 Route::get('/history', [HistoryController::class, 'index'])->name('history');
 Route::post('/simpan-transaksi', [TransaksiController::class, 'simpanTransaksi'])->name('simpan.transaksi');
-Route::post('/reset-kasir', [KasirController::class, 'resetKasir'])->name('reset.kasir');
+Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaction.detail');
+// Route::post('/reset-kasir', [KasirController::class, 'resetKasir'])->name('reset.kasir');
+// Route::post('/kasir/reset', [KasirController::class, 'reset'])->name('kasir.reset');
+
 

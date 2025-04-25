@@ -19,13 +19,14 @@ class TransaksiItem extends Model
     // Relasi dengan produk
     public function product()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class, 'product_id');
     }
 
     // Relasi dengan transaksi
     public function transaction()
     {
-        return $this->belongsTo(Transaksi::class);
+        return $this->belongsTo(Transaksi::class, 'transaction_id');
     }
+
 }
 

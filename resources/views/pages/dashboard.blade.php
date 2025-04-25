@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-    <section id="kasir-active" style="display: {{ $setupComplete ? 'block' : 'none' }}">
+    <section>
         <main>
             <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
                 <div class="container-xl px-4">
@@ -129,20 +129,18 @@
                     <div class="card-header border-bottom bg-light d-flex justify-content-between align-items-center">
                         <div class="card-title">Tabel Produk</div>
                         <div>
-                            <button class="btn btn-warning me-2" onclick="showSetupWithConfirmation()">
-                                <i class="fas fa-cog me-1"></i> Kembali ke Setup
-                            </button>
-                            <button type="button" class="btn btn-danger" onclick="confirmResetKasir()">
-                                <i class="fas fa-sync-alt me-1"></i> Reset Kasir
-                            </button>
+                        <form action="{{ route('kasir.reset') }}" method="POST" class="d-inline" id="reset-kasir-form">
+                            @csrf
+                            <button type="button" id="btn-reset-kasir" class="btn btn-danger">Reset Kasir</button>
+                        </form>
                         </div>
                     </div>
                     <div class="card-body">
                         <table id="datatablesSimple" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Gambar</th>
+                                    <th>No</th>
+                                    <th>Foto Produk</th>
                                     <th>Nama Produk</th>
                                     <th>Harga</th>
                                     <th>Stok</th>
@@ -150,9 +148,10 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            @php $counter = 1; @endphp
                             @forelse($products as $product)
                             <tr>
-                                <td>{{ $product->id }}</td>
+                                <td>{{ $counter ++ }}</td>
                                 <td>
                                     @if($product->image_path)
                                         <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="50">
@@ -163,28 +162,42 @@
                                 <td>{{ $product->name }}</td>
                                 <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
                                 <td>
-                                    <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
-                                        {{ $product->stock }}
-                                    </span>
+                                <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
+                                    {{ $product->stock > 0 ? $product->stock : 'Habis' }}
+                                </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-info edit-product" 
-                                            data-id="{{ $product->id }}"
-                                            data-name="{{ $product->name }}"
-                                            data-price="{{ $product->price }}"
-                                            data-stock="{{ $product->stock }}"
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#editProdukModal">
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-product" 
-                                            data-id="{{ $product->id }}"
-                                            data-name="{{ $product->name }}">
-                                        Hapus
-                                    </button>
+                                <button class="btn btn-sm btn-primary" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#showProdukModal-{{ $product->id }}">
+                                        <i class="bi bi-eye"></i> Show
+                                </button>
                                 </td>
                             </tr>
-                            @empty
+                            <!-- Modal Show untuk *this* $product -->
+                                <div class="modal fade" id="showProdukModal-{{ $product->id }}" tabindex="-1" aria-labelledby="showProdukModalLabel-{{ $product->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="showProdukModalLabel-{{ $product->id }}">
+                                            Detail Produk {{ $product->name }}
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                        <div class="card">
+                                            {{-- Gambar --}}
+                                            <img 
+                                            src="{{ $product->image_path ? asset('storage/'.$product->image_path) : 'https://via.placeholder.com/200x200?text=No+Image' }}" 
+                                            class="card-img-top" 
+                                            alt="Gambar {{ $product->name }}" 
+                                            style="max-height:400px; object-fit:cover;">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                @empty
                             <tr>
                                 <td colspan="6" class="text-center">Tidak ada produk tersedia</td>
                             </tr>
@@ -195,55 +208,6 @@
                 </div>
             </div>
         </main>
-        
-        <!-- Modal Edit Produk -->
-        <div class="modal fade" id="editProdukModal" tabindex="-1" aria-labelledby="editProdukModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form id="editProdukForm" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" id="edit_id" name="id">
-                        
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editProdukModalLabel">Edit Produk</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="edit_name" class="form-label">Nama Produk</label>
-                                <input type="text" class="form-control" id="edit_name" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit_price" class="form-label">Harga</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp.</span>
-                                    <input type="number" class="form-control" id="edit_price" name="price" min="0" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit_stock" class="form-label">Stok</label>
-                                <input type="number" class="form-control" id="edit_stock" name="stock" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit_image" class="form-label">Gambar Produk</label>
-                                <input type="file" class="form-control" id="edit_image" name="image">
-                                <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
-                                <div class="mt-2">
-                                    <img id="edit_image_preview" src="" alt="Preview Gambar" class="img-fluid rounded" style="max-width: 150px;">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
         <!-- modal total stockproduk -->
         <div class="modal fade" id="modalTotalStockProduk" tabindex="-1" aria-labelledby="modalTotalStockProdukLabel" aria-hidden="true">
@@ -260,7 +224,7 @@
                                     <th>No</th>
                                     <th>Nama Produk</th>
                                     <th>Stok</th>
-                                    <th>Gambar</th>
+                                    <th>FotoProduk</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -268,7 +232,11 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $product->name }}</td>
-                                    <td>{{ $product->stock }}</td>
+                                    <td>
+                                    <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
+                                    {{ $product->stock > 0 ? $product->stock : 'Habis' }}
+                                </span>
+                                    </td>
                                     <td>
                                         <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" width="50">
                                     </td>
@@ -303,16 +271,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($transactions as $index => $transaction)
-                                    @foreach ($transaction->transaksiItem as $item)
-                                    <tr>
-                                        <td>{{ $loop->parent->index + 1 }}</td>
-                                        <td>{{ $item->product->name }}</td>
-                                        <td>{{ $item->quantity }}</td>
-                                        <td>{{ $transaction->total_harga_formatted }}</td>
-                                        <td>{{ $transaction->transaction_date }}</td>
-                                    </tr>
-                                    @endforeach
+                            @php $counter = 1; @endphp
+                                @foreach ($produkTerjualGrouped as $index => $item)
+                                <tr>
+                                    <td>{{ $counter ++ }}</td>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td>{{ $item['total_quantity'] }}</td>
+                                    <td>Rp {{ number_format($item['total_price'], 0, ',', '.') }}</td>
+                                    <td>{{ $item['dates'] }}</td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -323,12 +290,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Form Reset Kasir Hidden -->
-        <form id="resetKasirForm" action="{{ route('reset.kasir') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
-
         <footer class="footer-admin mt-auto footer-light">
             <div class="container-xl px-4">
                 <div class="row">

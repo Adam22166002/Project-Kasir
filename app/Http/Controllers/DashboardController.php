@@ -13,16 +13,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Ambil semua transaksi dengan item transaksi dan produk terkait
         $transactions = Transaksi::with('transaksiItem.product')->get();
         $today = Carbon::today();
         
         // Ambil semua produk
         $products = Produk::all();
-        
-        // Tentukan jika setup sudah selesai (ada produk, harga, dan stok yang sudah diatur)
-        $setupComplete = $products->count() > 0 && 
-                         $products->where('price', '>', 0)->count() > 0 && 
-                         $products->where('stock', '>', 0)->count() > 0;
         
         // Ambil transaksi hari ini
         $todaySales = Transaksi::whereDate('transaction_date', $today)
@@ -35,15 +31,41 @@ class DashboardController extends Controller
         // Hitung total produk terjual hari ini
         $totalProdukTerjual = $todaySales->sum('total_quantity');
 
-            session()->flash('setup_complete', 'Semua pengaturan produk, harga, dan stok telah selesai. Anda dapat mulai melakukan transaksi.');
-            return view('pages.dashboard', compact(
+        // Gabungkan data item transaksi berdasarkan produk
+        $produkTerjual = collect();
+
+        foreach ($todaySales as $transaction) {
+            foreach ($transaction->transaksiItem as $item) {
+                $produkTerjual->push([
+                    'product_id' => $item->product_id,
+                    'name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->subtotal,
+                    'date' => $transaction->transaction_date
+                ]);
+            }
+        }
+
+        // Kelompokkan berdasarkan produk dan hitung total quantity dan total harga
+        $produkTerjualGrouped = $produkTerjual
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return [
+                    'name' => $items->first()['name'],
+                    'total_quantity' => $items->sum('quantity'),
+                    'total_price' => $items->sum('subtotal'),
+                    'dates' => $items->pluck('date')->unique()->implode(', '),
+                ];
+            });
+
+        // Kirim data ke view
+        return view('pages.dashboard', compact(
             'products', 
-            'setupComplete', 
             'todaySales', 
             'totalPenjualan', 
             'totalProdukTerjual',
-            'transactions'
+            'transactions',
+            'produkTerjualGrouped'
         ));
     }
-    
 }

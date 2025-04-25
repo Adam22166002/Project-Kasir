@@ -25,13 +25,15 @@ class ProdukController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image_path' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
         $product = new Produk();
         $product->name = $request->name;
-        $product->price = 0; 
-        $product->stock = 0; 
+        $product->price = $request->price; 
+        $product->stock = $request->stock; 
         
         if ($request->hasFile('image_path')) {
             $image_path = $request->file('image_path')->store('products', 'public');
@@ -40,7 +42,7 @@ class ProdukController extends Controller
         
         $product->save();
 
-        return redirect()->route('step2')->with('success', 'Produk berhasil ditambahkan!');
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // Display the specified product
@@ -59,34 +61,33 @@ class ProdukController extends Controller
 
     // Update the specified product in storage
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'stock' => 'required|integer',
+        'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+    
 
-        $produk = Produk::findOrFail($id);
+    $produk = Produk::findOrFail($id);
 
-        // Handle image upload if exists
-        if ($request->hasFile('image_path')) {
-            $imagePath = $request->file('image_path')->store('products', 'public');
-            $produk->image_path = $imagePath;
-        } else {
-            $imagePath = $produk->image_path;
-        }
-        
-
-        $produk->update([
-            'name' => $request->name,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'image_path' => $imagePath,
-        ]);
-
-        return redirect()->route('produk.index');
+    // Handle image upload if exists
+    $imagePath = $produk->image_path;
+    if ($request->hasFile('image_path')) {
+        $imagePath = $request->file('image_path')->store('products', 'public');
     }
+
+    $produk->update([
+        'name' => $request->name,
+        'price' => $request->price,
+        'stock' => $request->stock,
+        'image_path' => $imagePath,
+    ]);
+
+    return redirect()->route('produk.index')->with('success', 'Produk berhasil diperbarui!');
+}
+
 
     // hapus
     public function destroy($id)
@@ -97,37 +98,37 @@ class ProdukController extends Controller
         return redirect()->route('produk.index');
     }
 
-    public function updatePrice(Request $request, Produk $product)
-    {
-        $request->validate([
-            'price' => 'required|numeric|min:0',
-        ]);
+    // public function updatePrice(Request $request, Produk $product)
+    // {
+    //     $request->validate([
+    //         'price' => 'required|numeric|min:0',
+    //     ]);
 
-        $product->price = $request->price;
-        $product->save();
+    //     $product->price = $request->price;
+    //     $product->save();
 
-        if ($request->ajax()) {
-            return response()->json(['success' => true]);
-        }
+    //     if ($request->ajax()) {
+    //         return response()->json(['success' => true]);
+    //     }
 
-        return redirect()->route('step3')->with('success', 'Harga produk berhasil diperbarui!');
-    }
+    //     return redirect()->route('/')->with('success', 'Harga produk berhasil diperbarui!');
+    // }
 
     
-    public function updateStock(Request $request, Produk $product)
-    {
-        $request->validate([
-            'stock' => 'required|integer|min:0',
-        ]);
+    // public function updateStock(Request $request, Produk $product)
+    // {
+    //     $request->validate([
+    //         'stock' => 'required|integer|min:0',
+    //     ]);
         
-        $product->stock = $request->stock;
-        $product->save();
+    //     $product->stock = $request->stock;
+    //     $product->save();
         
-        if ($request->ajax()) {
-            return response()->json(['success' => true]);
-        }
+    //     if ($request->ajax()) {
+    //         return response()->json(['success' => true]);
+    //     }
         
-        return redirect()->route('step4')->with('success', 'Stok produk berhasil diperbarui!');
-    }
+    //     return redirect()->route('/')->with('success', 'Stok produk berhasil diperbarui!');
+    // }
 
 }

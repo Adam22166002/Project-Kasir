@@ -33,7 +33,7 @@ class KasirController extends Controller
         try {
             // Buat transaksi baru
             $transaction = new Transaksi();
-            $transaction->transaction_date = Carbon::today();
+            $transaction->transaction_date = now();
             $transaction->total_price = 0;
             $transaction->total_quantity = 0;
             $transaction->save();
@@ -96,16 +96,16 @@ class KasirController extends Controller
     }
     public function resetKasir()
     {
-        try {
-            // Hapus semua item transaksi terlebih dahulu
-            TransaksiItem::truncate();
+        // Mendapatkan tanggal hari ini
+        $today = Carbon::today();
 
-            // Hapus semua transaksi
-            Transaksi::truncate();
+        // Hapus semua transaksi hari ini
+        Transaksi::whereDate('created_at', $today)->delete();
 
-            return redirect()->back()->with('success', 'Semua data transaksi kasir berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menghapus data transaksi. Coba lagi nanti.');
-        }
+        // Hapus semua produk (atau produk yang sudah terjual hari ini jika diperlukan)
+        Produk::whereDate('created_at', $today)->delete();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('dashboard')->with('success', 'Kasir telah berhasil direset.');
     }
 }

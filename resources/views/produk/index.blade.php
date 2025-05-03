@@ -62,10 +62,11 @@
                                         <td>{{ $product->id }}</td>
                                         <td>
                                             @if($product->image_path)
-                                                <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="60">
+                                                <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" width="60">
                                             @else
                                                 <span class="text-muted">No image</span>
                                             @endif
+                                            <!--<img src="{{ asset($product->image_path) }}" alt="Product Image" style="max-width: 200px;">-->
                                         </td>
                                         <td>{{ $product->name }}</td>
                                         <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
@@ -195,64 +196,78 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Mengisi form edit saat modal dibuka
-        document.querySelectorAll('.edit-product').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = this.dataset.price;
-                const stock = this.dataset.stock;
-                const imagePath = this.dataset.imagePath;
-                
-                document.getElementById('edit_name').value = name;
-                document.getElementById('edit_price').value = price;
-                document.getElementById('edit_stock').value = stock;
+    // Delegasi event untuk tombol edit
+    document.querySelector('.card-body').addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('edit-product')) {
+            const button = e.target;
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+            const price = button.dataset.price;
+            const stock = button.dataset.stock;
+            const imagePath = button.dataset.imagePath;
 
-                document.getElementById('editProdukForm').action = `/produk/${id}`;
-                document.getElementById('edit_image_preview').src = imagePath ? `/storage/${imagePath}` : ''; // Set preview gambar
-            });
-        });
-        
-        // Konfirmasi hapus produk
-            document.querySelectorAll('.delete-product').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    const name = this.dataset.name;
+            // Isi data produk ke dalam form
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_price').value = price;
+            document.getElementById('edit_stock').value = stock;
+
+            // Update action form untuk mengarah ke URL produk yang akan diedit
+            document.getElementById('editProdukForm').action = `/produk/${id}`;
+
+            // Update preview gambar jika ada gambar yang sudah ada
+            document.getElementById('edit_image_preview').src = imagePath ? `/products/${imagePath}` : '';
+        }
+
+        // Delegasi event untuk tombol hapus
+        if (e.target && e.target.classList.contains('delete-product')) {
+            const button = e.target;
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+
+            Swal.fire({
+                title: 'Hapus Produk?',
+                text: `Apakah Anda yakin ingin menghapus produk "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create delete form
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/produk/${id}`;
                     
-                    Swal.fire({
-                        title: 'Hapus Produk?',
-                        text: `Apakah Anda yakin ingin menghapus produk "${name}"?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Create delete form
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = `/produk/${id}`;
-                            
-                            const methodInput = document.createElement('input');
-                            methodInput.type = 'hidden';
-                            methodInput.name = '_method';
-                            methodInput.value = 'DELETE';
-                            
-                            const csrfInput = document.createElement('input');
-                            csrfInput.type = 'hidden';
-                            csrfInput.name = '_token';
-                            csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
-                            
-                            form.appendChild(methodInput);
-                            form.appendChild(csrfInput);
-                            document.body.appendChild(form);
-                            form.submit();
-                        }
-                    });
-                });
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+                    
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+                    
+                    form.appendChild(methodInput);
+                    form.appendChild(csrfInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
             });
-        });
+        }
+    });
+
+    // Handle preview gambar saat memilih file baru
+    document.getElementById('edit_image').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('edit_image_preview').src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    });
+});
+
 </script>
 @endpush

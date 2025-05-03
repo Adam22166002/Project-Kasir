@@ -51,7 +51,7 @@
                         <div class="col-md-4 mb-4">
                             <div class="card shadow-none h-60 product-card">
                                 @if($product->image_path)
-                                    <img src="{{ asset('storage/' . $product->image_path) }}" class="card-img-top product-image" alt="{{ $product->name }}">
+                                    <img src="{{ asset($product->image_path) }}" class="card-img-top product-image" alt="{{ $product->name }}">
                                 @else
                                     <img src="{{ asset('img/no-image.jpg') }}" class="card-img-top product-image" alt="{{ $product->name }}">
                                 @endif

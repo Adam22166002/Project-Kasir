@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
+<head>
+<meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="viewport"
@@ -11,7 +11,7 @@
     <meta name="author" content="" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>App Kasir</title>
+    <title>Login Kasir</title>
     <link
       href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css"
       rel="stylesheet"
@@ -32,61 +32,29 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"
       crossorigin="anonymous"
     ></script>
-    <style>
-        .product-image {
-                width: 100%;  
-                height: 200px; 
-                object-fit: cover;
-            }
-
-            .card-body {
-                padding: 1rem; 
-            }
-
-            .card-title {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem; 
-            }
-
-            .card-text {
-                font-size: 0.9rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .d-flex {
-                margin-top: 0.75rem;
-            }
-
-    </style>
-  </head>
-  <body>
-         <!-- Konten Utama -->
-            <div class="col-md-12">
+</head>
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
                 @yield('content')
-            </div>
-
-
-    <script>
-        document.getElementById('btn-reset-kasir').addEventListener('click', function() {
-        Swal.fire({
-            title: 'Reset Kasir?',
-            text: "PERHATIAN! Semua data produk dan transaksi akan dihapus. Tindakan ini tidak dapat dibatalkan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Reset Semua Data!',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Jika konfirmasi, submit form
-                document.getElementById('reset-kasir-form').submit();
-            }
-        });
-    });
-    </script>
-    
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="footer-admin footer-dark">
+                <div class="container-xl">
+                    <div class="row">
+                        <div class="col-md-6 small">Copyright &copy; Kasir System {{ date('Y') }}</div>
+                        <div class="col-md-6 text-md-end small">
+                            <a href="#!">Privacy Policy</a>
+                            &middot;
+                            <a href="#!">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Menambahkan SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -113,5 +81,4 @@
     ></script>
     <script src="js/litepicker.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  </body>
 </html>

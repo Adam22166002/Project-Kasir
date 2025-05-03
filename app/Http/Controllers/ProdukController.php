@@ -35,10 +35,24 @@ class ProdukController extends Controller
         $product->price = $request->price; 
         $product->stock = $request->stock; 
         
+        // if ($request->hasFile('image_path')) {
+        //     // $image_path = $request->file('image_path')->store('products', 'public');
+        //     // $product->image_path = $image_path;
+        //     $image_path = $request->file('image_path')->move(public_path('products'));
+        //     $product->image_path = 'products/' . $request->file('image_path')->hashName();
+        // }
         if ($request->hasFile('image_path')) {
-            $image_path = $request->file('image_path')->store('products', 'public');
-            $product->image_path = $image_path;
-        }
+    $file = $request->file('image_path');
+    $filename = $file->hashName(); // nama unik, biar nggak bentrok
+
+    // Pindahkan file ke /public_html/products (hosting root)
+    $file->move(public_path('products'), $filename);
+    // $file->move(base_path('../public_html/products'), $filename);
+
+    // Simpan path relatif ke database
+    $product->image_path = 'products/' . $filename;
+}
+
         
         $product->save();
 
@@ -73,9 +87,21 @@ class ProdukController extends Controller
     $produk = Produk::findOrFail($id);
 
     // Handle image upload if exists
+    // $imagePath = $produk->image_path;
+    // if ($request->hasFile('image_path')) {
+    //     // $imagePath = $request->file('image_path')->store('products', 'public');
+    //     $image_path = $request->file('image_path')->move(public_path('products'));
+    //     $product->image_path = 'products/' . $request->file('image_path')->hashName();
+    // }
     $imagePath = $produk->image_path;
+    
     if ($request->hasFile('image_path')) {
-        $imagePath = $request->file('image_path')->store('products', 'public');
+        $file = $request->file('image_path');
+        $filename = $file->hashName(); // nama unik
+        // $file->move(public_path('products'), $filename);
+        $file->move(public_path('products'), $filename);
+    // $file->move(base_path('../public_html/products'), $filename);
+        $imagePath = 'products/' . $filename;
     }
 
     $produk->update([
@@ -97,38 +123,4 @@ class ProdukController extends Controller
 
         return redirect()->route('produk.index');
     }
-
-    // public function updatePrice(Request $request, Produk $product)
-    // {
-    //     $request->validate([
-    //         'price' => 'required|numeric|min:0',
-    //     ]);
-
-    //     $product->price = $request->price;
-    //     $product->save();
-
-    //     if ($request->ajax()) {
-    //         return response()->json(['success' => true]);
-    //     }
-
-    //     return redirect()->route('/')->with('success', 'Harga produk berhasil diperbarui!');
-    // }
-
-    
-    // public function updateStock(Request $request, Produk $product)
-    // {
-    //     $request->validate([
-    //         'stock' => 'required|integer|min:0',
-    //     ]);
-        
-    //     $product->stock = $request->stock;
-    //     $product->save();
-        
-    //     if ($request->ajax()) {
-    //         return response()->json(['success' => true]);
-    //     }
-        
-    //     return redirect()->route('/')->with('success', 'Stok produk berhasil diperbarui!');
-    // }
-
 }

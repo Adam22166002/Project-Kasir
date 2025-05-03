@@ -14,6 +14,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('stock')->default(0);
             $table->string('image_path')->nullable();
+            $table->decimal('cost_price', 10, 2)->default(0)->after('price');
             $table->timestamps();
         });
     }

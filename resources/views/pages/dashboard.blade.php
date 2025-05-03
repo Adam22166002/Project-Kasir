@@ -12,17 +12,24 @@
                                     <div class="page-header-icon">
                                         <i data-feather="activity"></i>
                                     </div>
-                                    Manajemen Kasir
+                                    <!-- font -->
+                                    Manajemen Kasir 
                                 </h1>
                                 <div class="page-header-subtitle">
                                     Monitor transaksi dan produk toko Anda
                                 </div>
                             </div>
-                            <div class="col-12 col-xl-auto mt-4">
+                            <div class="col-12 col-xl-auto mt-4 d-flex justify-content-center align-items-center gap-2">
+                                <!-- Tombol Buka Kasir -->
                                 <div class="input-group input-group-joined border-0" style="width: 16.5rem">
                                     <span class="input-group-text"><i class="text-primary" data-feather="shopping-cart"></i></span>
                                     <a href="{{ route('kasir') }}" class="btn btn-light btn-md">Buka Kasir</a>
                                 </div>
+                                <!-- Tombol Logout -->
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger btn-md">Logout</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -30,47 +37,47 @@
             </header>
             <div class="container-xl px-4 mt-n10">
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                    <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
                         <div class="card bg-primary text-white h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="me-3">
                                         <div class="text-white-75 small">
-                                            Total Penjualan Hari Ini
+                                            Penjualan Hari Ini
                                         </div>
-                                        <div class="text-lg fw-bold">Rp. {{ number_format($totalPenjualan, 0, ',', '.') }}</div>
+                                        <div class="text-md fw-bold">Rp. {{ number_format($totalPenjualan, 0, ',', '.') }}</div>
                                     </div>
                                     <i class="feather-xl text-white-50" data-feather="calendar"></i>
                                 </div>
                             </div>
                             <div class="card-footer d-flex align-items-center justify-content-between small">
-                                <a class="text-white stretched-link" href="{{ route('history') }}">Lihat Laporan</a>
+                                <a class="text-white stretched-link" href="{{ route('history') }}">Lihat Penjualan</a>
                                 <div class="text-white">
                                     <i class="fas fa-angle-right"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                    <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
                         <div class="card bg-warning text-white h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="me-3">
-                                        <div class="text-white-75 small">Total Produk Terjual</div>
-                                        <div class="text-lg fw-bold">{{ number_format($totalProdukTerjual, 0, ',', '.') }} item</div>
+                                        <div class="text-white-75 small">Produk Terjual</div>
+                                        <div class="text-md fw-bold">{{ number_format($totalProdukTerjual, 0, ',', '.') }} item</div>
                                     </div>
                                     <i class="feather-xl text-white-50" data-feather="shopping-bag"></i>
                                 </div>
                             </div>
                             <div class="card-footer d-flex align-items-center justify-content-between small">
-                                <a class="text-white stretched-link" data-bs-target="#modalProdukTerjual" data-bs-toggle="modal">Lihat Laporan</a>
+                                <a class="text-white stretched-link" data-bs-target="#modalProdukTerjual" data-bs-toggle="modal">Lihat Produk</a>
                                 <div class="text-white">
                                     <i class="fas fa-angle-right"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                    <!-- <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
                         <div class="card bg-success text-white h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -88,14 +95,37 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                    </div> -->
+                    <!-- <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                        <div class="card bg-info text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="me-3">
+                                        <div class="text-white-75 small">Laba Bersih Bulan Ini</div>
+                                        <div class="text-lg fw-bold">Rp. 
+                                            @if(is_numeric($labaBersih))
+                                                {{ number_format($labaBersih, 0, ',', '.') }}
+                                            @else
+                                                0
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <i class="feather-xl text-white-50" data-feather="bar-chart-2"></i>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" href="{{ route('laporan.laba-rugi') }}">Lihat Laporan</a>
+                                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
                         <div class="card bg-danger text-white h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="me-3">
                                         <div class="text-white-75 small">Total Produk</div>
-                                        <div class="text-lg fw-bold">{{ $products->count() }} produk</div>
+                                        <div class="text-md fw-bold">{{ $products->count() }} produk</div>
                                     </div>
                                     <i class="feather-xl text-white-50" data-feather="database"></i>
                                 </div>
@@ -108,7 +138,80 @@
                             </div>
                         </div>
                     </div>
+                <!-- Laba Bersih Bulan Ini -->
+                <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
+                    <div class="card bg-info text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Laporan Laba</div>
+                                    <div class="text-md fw-bold">Rp. {{ number_format($labaRugi['labaBersih'], 0, ',', '.') }}                                    </div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="bar-chart-2"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="{{ route('laporan.laba-rugi') }}">Lihat Laporan</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
                 </div>
+                <!-- Modal Awal -->
+                <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Laporan Modal</div>
+                                    <div class="text-md fw-bold">Rp {{ number_format($modalKeluar, 0, ',', '.') }}</div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="{{ route('laporan.perubahan-modal') }}">Lihat Laporan</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Akhir -->
+                <!-- <div class="col-lg-3 col-md-3 col-xl-3 mb-4">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Modal Akhir</div>
+                                    <div class="text-lg fw-bold">Rp {{ number_format($modalAkhir, 0, ',', '.') }}</div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="credit-card"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="{{ route('laporan.perubahan-modal') }}">Lihat Laporan</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Total Aset -->
+                <div class="col-lg-2 col-md-2 col-xl-2 mb-4">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Neraca</div>
+                                    <div class="text-md fw-bold">Rp {{ number_format($totalAset, 0, ',', '.') }}</div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="briefcase"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="{{ route('laporan.neraca') }}">Lihat Laporan</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
             
             <!-- table -->
@@ -154,7 +257,7 @@
                                 <td>{{ $counter ++ }}</td>
                                 <td>
                                     @if($product->image_path)
-                                        <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" width="50">
+                                        <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" width="60">
                                     @else
                                         <span class="text-muted">No image</span>
                                     @endif
@@ -174,27 +277,28 @@
                                 </button>
                                 </td>
                             </tr>
-                            <!-- Modal Show untuk *this* $product -->
+                            <!-- Modal Show untuk Produk -->
                                 <div class="modal fade" id="showProdukModal-{{ $product->id }}" tabindex="-1" aria-labelledby="showProdukModalLabel-{{ $product->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                        <h5 class="modal-title" id="showProdukModalLabel-{{ $product->id }}">
-                                            Detail Produk {{ $product->name }}
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="showProdukModalLabel-{{ $product->id }}">
+                                                    Detail Produk {{ $product->name }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="card">
+                                                     <!--<img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" width="60">-->
+                                                    {{-- Gambar Produk --}}
+                                                    <img 
+                                                        src="{{ asset($product->image_path) }}" 
+                                                        class="card-img-top" 
+                                                        alt="Gambar {{ $product->name }}" 
+                                                        style="max-height:400px; object-fit:cover;">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="modal-body">
-                                        <div class="card">
-                                            {{-- Gambar --}}
-                                            <img 
-                                            src="{{ $product->image_path ? asset('storage/'.$product->image_path) : 'https://via.placeholder.com/200x200?text=No+Image' }}" 
-                                            class="card-img-top" 
-                                            alt="Gambar {{ $product->name }}" 
-                                            style="max-height:400px; object-fit:cover;">
-                                        </div>
-                                        </div>
-                                    </div>
                                     </div>
                                 </div>
                                 @empty
@@ -238,7 +342,7 @@
                                 </span>
                                     </td>
                                     <td>
-                                        <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" width="50">
+                                        <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" width="50">
                                     </td>
                                 </tr>
                                 @endforeach

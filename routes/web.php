@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\ModalController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\StepController;
 use App\Http\Controllers\TransaksiController;
@@ -32,19 +35,26 @@ use Illuminate\Support\Facades\Route;
 // Route::post('/produk/update-stock/{id}', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
 
 //setup selesai
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/kasir', [KasirController::class, 'index'])->name('kasir');
-// Route::get('/kasir/transaksi', [KasirController::class, 'transaksi'])->name('kasir.transaksi'); 
-Route::post('/kasir/reset', [KasirController::class, 'resetKasir'])->name('kasir.reset');
-// Route::post('/kasir/reset', [KasirController::class, 'reset'])->name('kasir.reset');
-Route::post('/kasir/complete-setup', 'KasirController@completeSetup')->name('kasir.complete-setup');
-Route::resource('/produk', ProdukController::class);
-// Route::post('/produk/{product}/update-price', [ProdukController::class, 'updatePrice'])->name('produk.update.price');
-// Route::patch('/produk/{product}/update-stock', [ProdukController::class, 'updateStock'])->name('produk.update.stock');
-Route::get('/history', [HistoryController::class, 'index'])->name('history');
-Route::post('/simpan-transaksi', [TransaksiController::class, 'simpanTransaksi'])->name('simpan.transaksi');
-Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaction.detail');
-// Route::post('/reset-kasir', [KasirController::class, 'resetKasir'])->name('reset.kasir');
-// Route::post('/kasir/reset', [KasirController::class, 'reset'])->name('kasir.reset');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::middleware('auth')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('/modal', ModalController::class)->only(['index', 'create', 'store']);
+    Route::get('/kasir', [KasirController::class, 'index'])->name('kasir');
+    Route::post('/kasir/reset', [KasirController::class, 'resetKasir'])->name('kasir.reset');
+    Route::post('/kasir/complete-setup', 'KasirController@completeSetup')->name('kasir.complete-setup');
+    Route::resource('/produk', ProdukController::class);
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
+    Route::post('/simpan-transaksi', [TransaksiController::class, 'simpanTransaksi'])->name('simpan.transaksi');
+    Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaction.detail');
+    Route::get('/laporan/perubahan-modal', [LaporanController::class, 'perubahanModal'])->name('laporan.perubahan-modal');
+    Route::get('/laporan/laba-rugi', [LaporanController::class, 'labaRugi'])->name('laporan.laba-rugi');
+    Route::get('/laporan/neraca', [LaporanController::class, 'neraca'])->name('laporan.neraca');
+    Route::resource('/modal', ModalController::class);
+    Route::get('/laporan-laba/pdf', [LaporanController::class, 'cetakLabaPDF'])->name('laporan.laba.pdf');
+Route::get('/laporan-neraca/pdf', [LaporanController::class, 'cetakNeracaPDF'])->name('laporan.neraca.pdf');
+Route::get('/laporan-modal/pdf', [LaporanController::class, 'cetakModalPDF'])->name('laporan.modal.pdf');
+});
 
 

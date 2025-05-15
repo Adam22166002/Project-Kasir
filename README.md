@@ -7,4 +7,4 @@
 - Menjalankan proyek: npm run dev, php artisan serve
 - Akses http://localhost:3000 untuk melihat aplikasi berjalan.
 ## Login Page
-https://github.com/Adam22166002/Project-Kasir/issues/1#issue-3066870255
+![Login Page](https://raw.githubusercontent.com/Adam22166002/Project-Kasir/main/images/login-page.png)

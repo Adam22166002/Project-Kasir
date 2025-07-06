@@ -6,6 +6,9 @@
 - Install semua dependensi yang diperlukan: composer install, npm install
 - Menjalankan proyek: npm run dev, php artisan serve
 - Akses http://localhost:3000 untuk melihat aplikasi berjalan.
+## Akun Admin
+- admin@example.com
+- kasir2025
 ## Login Page
 ![Login Page](https://github.com/Adam22166002/Project-Kasir/blob/main/public/assets/ss%20login%20kasir.png)
 ## Dashboard Page
